@@ -46,7 +46,7 @@ RANK_PUSH_HOUR = 20            # 20 = 晚8点; 设为 -1 关闭自动发
 RANK_PUSH_CHAT = "@earn9292"   # 榜单发到哪 (群用户名或频道用户名)
 
 # 提现申请通知给谁 (你的Telegram数字ID, 用 @userinfobot 查; 不填则不通知)
-ADMIN_ID = 0                   # 例如 123456789; 0=不通知
+ADMIN_ID = 8915875126                   # 例如 123456789; 0=不通知
 
 DB_FILE = "bot_data.db"
 # =====================================================================
@@ -75,33 +75,33 @@ TEXTS = {
         "rank_title": "🏆 邀请榜 TOP 10\n", "rank_empty": "🏆 邀请榜还没人上榜，快去邀请好友抢第一名！",
         "rank_line": "{rank} {name} — 邀请 {n} 人", "rank_foot": "\n继续邀请，冲上榜首赢额外大奖！",
         "help_title": "❓ 帮助中心 — 请选择你需要的：",
-        "help_tips": "📖 新手教程", "help_bind": "🔗 绑定账号", "help_withdraw": "💸 提现",
+        "help_tips": "📖 新手教程", "help_bind": "🔗 绑定平台账号", "help_withdraw": "💰 兑换提现",
         "help_faq": "📋 常见问题", "help_support": "🧑‍💻 联系客服", "help_back": "⬅ 返回",
         "tips_content": (
             "📖 <b>新手 3 步开始赚钱</b>\n\n1️⃣ 每天点【✅ 签到】领积分，连续签到奖励更高\n"
             "2️⃣ 点【👥 邀请赚钱】把专属链接发给好友，每拉 1 人 +{invite} 分\n"
-            "3️⃣ 积分攒够 {min} 分，进【❓帮助 → 💸提现】申请提现\n\n频道看活动：{channel}\n群里聊天互助：{group}"
+            "3️⃣ 积分攒够 {min} 分，进【❓帮助 → 💰兑换提现】兑换到平台账号提现\n\n频道看活动：{channel}\n群里聊天互助：{group}"
         ),
-        "bind_ask": "🔗 <b>绑定收款账号</b>\n\n请直接回复你的收款账号（如钱包地址 / 手机号），\n我会帮你保存，提现时自动使用。\n\n格式：直接发送账号即可。",
-        "bind_ok": "✅ 收款账号已绑定：{acct}\n如需修改，重新进入此菜单即可。",
-        "bind_current": "你当前已绑定账号：{acct}\n如需修改，请直接回复新账号。",
-        "withdraw_info": "💸 <b>提现</b>\n\n当前积分：{pts}\n提现门槛：{min} 分\n绑定账号：{acct}\n\n{status}",
-        "withdraw_no_acct": "⚠ 你还没绑定收款账号，请先到【🔗 绑定账号】。",
+        "bind_ask": "🔗 <b>绑定平台账号</b>\n\n请直接回复你在平台的账号 / UID，\n我会帮你保存，兑换时积分会转到这个账号。\n\n格式：直接发送你的平台UID即可。",
+        "bind_ok": "✅ 平台账号已绑定：{acct}\n如需修改，重新进入此菜单即可。",
+        "bind_current": "你当前已绑定平台账号：{acct}\n如需修改，请直接回复新的平台UID。",
+        "withdraw_info": "💰 <b>兑换提现</b>\n\n当前积分：{pts}\n兑换门槛：{min} 分\n平台账号：{acct}\n\n你的积分将按 1:1 兑换到平台账号，在平台完成提现。\n\n{status}",
+        "withdraw_no_acct": "⚠ 你还没绑定平台账号，请先到【🔗 绑定平台账号】。",
         "withdraw_not_enough": "⚠ 积分不足 {min} 分，继续签到和邀请攒积分吧！",
         "withdraw_ok": "✅ 提现申请已提交！客服会尽快为你处理，请留意 {contact} 的消息。",
-        "withdraw_btn": "确认申请提现",
+        "withdraw_btn": "确认兑换到平台",
         "faq_content": (
-            "📋 <b>常见问题</b>\n\n<b>Q：积分有什么用？</b>\nA：可提现，也可参与抽奖。\n\n"
+            "📋 <b>常见问题</b>\n\n<b>Q：积分有什么用？</b>\nA：可按 1:1 兑换到平台账号提现，也可参与抽奖。\n\n"
             "<b>Q：邀请奖励多久到账？</b>\nA：好友打开机器人立即到账。\n\n"
             "<b>Q：为什么连续签到断了？</b>\nA：漏签一天会重置，记得每天来。\n\n"
-            "<b>Q：提现多久到？</b>\nA：申请后客服人工处理，请耐心等待。"
+            "<b>Q：兑换多久到账？</b>\nA：申请后客服人工转入平台，请耐心等待，之后在平台提现。"
         ),
         "support_content": "🧑‍💻 联系客服：{contact}\n（请说明你的问题，我们会尽快回复）",
         "fallback": "点下方按钮操作哦 👇",
         "code_ok": "🎁 口令正确！+{n} 积分启动金已到账！\n现在去签到、邀请好友赚更多吧 👇",
         "code_used": "你已经领过启动金啦，不能重复领取～",
         "code_wrong": "口令不对哦。如果你是从 WhatsApp 过来的，请核对公告里的口令。",
-        "withdraw_done_deduct": "✅ 提现申请已提交！已扣除 {min} 积分，客服会尽快处理，请留意 {contact} 的消息。",
+        "withdraw_done_deduct": "✅ 兑换申请已提交！已扣除 {min} 积分，将按 1:1 转入你的平台账号。客服处理后请到平台查看，有问题联系 {contact}。",
     },
     "en": {
         "choose_lang": "请选择语言 / Please choose your language：",
@@ -125,33 +125,33 @@ TEXTS = {
         "rank_title": "🏆 Invite Leaderboard TOP 10\n", "rank_empty": "🏆 No one on the board yet — invite friends and grab #1!",
         "rank_line": "{rank} {name} — {n} invites", "rank_foot": "\nKeep inviting to reach the top and win big!",
         "help_title": "❓ Help Center — pick what you need:",
-        "help_tips": "📖 Getting Started", "help_bind": "🔗 Bind Account", "help_withdraw": "💸 Withdraw",
+        "help_tips": "📖 Getting Started", "help_bind": "🔗 Bind Platform Account", "help_withdraw": "💰 Exchange & Withdraw",
         "help_faq": "📋 FAQ", "help_support": "🧑‍💻 Support", "help_back": "⬅ Back",
         "tips_content": (
             "📖 <b>Start earning in 3 steps</b>\n\n1️⃣ Tap [✅ Check in] daily; longer streaks earn more\n"
             "2️⃣ Tap [👥 Invite & Earn] and share your link; +{invite} per invite\n"
-            "3️⃣ Once you reach {min} points, go to [❓Help → 💸Withdraw]\n\nChannel for events: {channel}\nGroup chat: {group}"
+            "3️⃣ Once you reach {min} points, go to [❓Help → 💰Exchange] to convert to your platform account\n\nChannel for events: {channel}\nGroup chat: {group}"
         ),
-        "bind_ask": "🔗 <b>Bind your payout account</b>\n\nReply with your payout account (wallet address / phone).\nI'll save it for withdrawals.\n\nJust send the account directly.",
-        "bind_ok": "✅ Account bound: {acct}\nTo change it, open this menu again.",
-        "bind_current": "Current account: {acct}\nReply with a new one to change it.",
-        "withdraw_info": "💸 <b>Withdraw</b>\n\nPoints: {pts}\nMinimum: {min}\nAccount: {acct}\n\n{status}",
-        "withdraw_no_acct": "⚠ No payout account yet. Please go to [🔗 Bind Account] first.",
+        "bind_ask": "🔗 <b>Bind your platform account</b>\n\nReply with your platform account / UID.\nPoints will be converted to this account.\n\nJust send your platform UID directly.",
+        "bind_ok": "✅ Platform account bound: {acct}\nTo change it, open this menu again.",
+        "bind_current": "Current platform account: {acct}\nReply with a new UID to change it.",
+        "withdraw_info": "💰 <b>Exchange &amp; Withdraw</b>\n\nPoints: {pts}\nMinimum: {min}\nPlatform account: {acct}\n\nYour points convert 1:1 to your platform account, withdraw there.\n\n{status}",
+        "withdraw_no_acct": "⚠ No platform account yet. Please go to [🔗 Bind Platform Account] first.",
         "withdraw_not_enough": "⚠ Below {min} points. Keep checking in and inviting!",
         "withdraw_ok": "✅ Withdrawal request submitted! Support will handle it soon. Watch for messages from {contact}.",
-        "withdraw_btn": "Confirm withdrawal",
+        "withdraw_btn": "Confirm exchange to platform",
         "faq_content": (
-            "📋 <b>FAQ</b>\n\n<b>Q: What are points for?</b>\nA: Withdraw them or join lucky draws.\n\n"
+            "📋 <b>FAQ</b>\n\n<b>Q: What are points for?</b>\nA: Exchange 1:1 to your platform account to withdraw, or join lucky draws.\n\n"
             "<b>Q: When do invite rewards arrive?</b>\nA: Instantly when your friend opens the bot.\n\n"
             "<b>Q: Why did my streak reset?</b>\nA: Missing a day resets it. Come daily!\n\n"
-            "<b>Q: How long for withdrawals?</b>\nA: Handled manually by support, please be patient."
+            "<b>Q: How long for exchange?</b>\nA: Manually transferred to the platform by support; withdraw there afterwards."
         ),
         "support_content": "🧑‍💻 Support: {contact}\n(Describe your issue, we'll reply soon)",
         "fallback": "Tap a button below 👇",
         "code_ok": "🎁 Correct code! +{n} starter points credited!\nNow check in and invite friends to earn more 👇",
         "code_used": "You've already claimed the starter bonus~",
         "code_wrong": "Wrong code. If you came from WhatsApp, please check the code in the announcement.",
-        "withdraw_done_deduct": "✅ Withdrawal submitted! {min} points deducted. Support will process it soon — watch for messages from {contact}.",
+        "withdraw_done_deduct": "✅ Exchange submitted! {min} points deducted, will be transferred 1:1 to your platform account. Check the platform after processing; contact {contact} if needed.",
     },
 }
 # =====================================================================
@@ -451,8 +451,12 @@ async def do_withdraw(cb: CallbackQuery):
         try:
             await bot.send_message(
                 ADMIN_ID,
-                f"💸 提现申请\n用户: {user['first_name']} (@{user['username']}) id={uid}\n"
-                f"收款账号: {user['account']}\n扣除积分: {WITHDRAW_MIN}\n剩余积分: {user['points']-WITHDRAW_MIN}")
+                f"💰 兑换提现申请\n"
+                f"TG用户: {user['first_name']} (@{user['username']}) id={uid}\n"
+                f"平台账号(UID): {user['account']}\n"
+                f"兑换积分: {WITHDRAW_MIN}\n"
+                f"剩余TG积分: {user['points']-WITHDRAW_MIN}\n\n"
+                f"👉 请到平台给该UID加 {WITHDRAW_MIN} 积分")
         except Exception:
             pass
 
