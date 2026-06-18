@@ -61,7 +61,7 @@ TEXTS = {
             "👥 邀请好友，每人 +{invite} 积分\n🏆 冲上邀请榜，赢更多奖励\n\n点下方按钮开始 👇"
         ),
         "btn_signin": "✅ 签到", "btn_points": "💰 我的积分", "btn_invite": "👥 邀请赚钱",
-        "btn_rank": "🏆 邀请榜", "btn_help": "❓ 帮助",
+        "btn_rank": "🏆 邀请榜", "btn_help": "❓ 帮助", "btn_withdraw": "💰 兑换提现",
         "already_signed": "今天已经签到过啦，明天再来～\n当前积分：{pts}",
         "signin_ok": "✅ 签到成功！+{earned} 积分{bonus}\n已连续签到 {streak} 天\n当前总积分：{pts}",
         "streak_bonus": "\n🔥 连续签到满 {days} 天，额外 +{n}！",
@@ -104,6 +104,7 @@ TEXTS = {
         "withdraw_done_deduct": "✅ 兑换申请已提交！已扣除 {min} 积分，将按 1:1 转入你的平台账号。客服处理后请到平台查看，有问题联系 {contact}。",
         "withdraw_confirm": "⚠️ <b>请核对你的平台账号</b>\n\n积分将转入这个平台账号：\n<b>{acct}</b>\n\n兑换积分：{min}\n\n确认无误再点下方按钮，转错账号无法找回！\n账号填错了？先去【🔗 绑定平台账号】改正。",
         "withdraw_confirm_btn": "✅ 确认账号无误，兑换",
+        "btn_bind_now": "🔗 绑定账号", "btn_bind_edit": "✏️ 修改账号",
     },
     "en": {
         "choose_lang": "请选择语言 / Please choose your language：",
@@ -113,7 +114,7 @@ TEXTS = {
             "👥 Invite friends, +{invite} points each\n🏆 Top the invite leaderboard for bigger rewards\n\nTap a button below to start 👇"
         ),
         "btn_signin": "✅ Check in", "btn_points": "💰 My Points", "btn_invite": "👥 Invite & Earn",
-        "btn_rank": "🏆 Leaderboard", "btn_help": "❓ Help",
+        "btn_rank": "🏆 Leaderboard", "btn_help": "❓ Help", "btn_withdraw": "💰 Exchange",
         "already_signed": "You've already checked in today, come back tomorrow~\nPoints: {pts}",
         "signin_ok": "✅ Checked in! +{earned} points{bonus}\nStreak: {streak} days\nTotal points: {pts}",
         "streak_bonus": "\n🔥 {days}-day streak bonus +{n}!",
@@ -156,6 +157,7 @@ TEXTS = {
         "withdraw_done_deduct": "✅ Exchange submitted! {min} points deducted, will be transferred 1:1 to your platform account. Check the platform after processing; contact {contact} if needed.",
         "withdraw_confirm": "⚠️ <b>Please verify your platform account</b>\n\nPoints will go to:\n<b>{acct}</b>\n\nExchange: {min} points\n\nConfirm only if correct — wrong account cannot be recovered!\nWrong account? Go to [🔗 Bind Platform Account] to fix it.",
         "withdraw_confirm_btn": "✅ Account is correct, exchange",
+        "btn_bind_now": "🔗 Bind Account", "btn_bind_edit": "✏️ Edit Account",
     },
 }
 # =====================================================================
@@ -228,17 +230,15 @@ def lang_keyboard():
 
 def main_menu(lang):
     return ReplyKeyboardMarkup(keyboard=[
-        [KeyboardButton(text=T(lang, "btn_signin")), KeyboardButton(text=T(lang, "btn_points"))],
-        [KeyboardButton(text=T(lang, "btn_invite")), KeyboardButton(text=T(lang, "btn_rank"))],
-        [KeyboardButton(text=T(lang, "btn_help"))],
+        [KeyboardButton(text=T(lang, "btn_signin")), KeyboardButton(text=T(lang, "btn_invite"))],
+        [KeyboardButton(text=T(lang, "btn_points")), KeyboardButton(text=T(lang, "btn_rank"))],
+        [KeyboardButton(text=T(lang, "btn_withdraw")), KeyboardButton(text=T(lang, "btn_help"))],
     ], resize_keyboard=True)
 
 
 def help_menu(lang):
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text=T(lang, "help_tips"), callback_data="h_tips"),
-         InlineKeyboardButton(text=T(lang, "help_bind"), callback_data="h_bind")],
-        [InlineKeyboardButton(text=T(lang, "help_withdraw"), callback_data="h_withdraw"),
          InlineKeyboardButton(text=T(lang, "help_faq"), callback_data="h_faq")],
         [InlineKeyboardButton(text=T(lang, "help_support"), callback_data="h_support")],
     ])
@@ -401,8 +401,45 @@ async def help_support(cb: CallbackQuery):
     await cb.answer()
 
 
-@dp.callback_query(F.data == "h_bind")
-async def help_bind(cb: CallbackQuery):
+def withdraw_view(user, lang):
+    """生成兑换提现页的文字和按钮(整合绑定显示)。"""
+    acct = user["account"] if user and user["account"] else "—"
+    pts = user["points"] if user else 0
+    rows = []
+    if not user or not user["account"]:
+        # 没绑定: 提示去绑定 + 绑定按钮
+        status = T(lang, "withdraw_no_acct", min=WITHDRAW_MIN)
+        rows.append([InlineKeyboardButton(text=T(lang, "btn_bind_now"), callback_data="wd_bind")])
+    elif pts < WITHDRAW_MIN:
+        # 已绑定但积分不够: 显示账号 + 修改按钮
+        status = T(lang, "withdraw_not_enough", min=WITHDRAW_MIN)
+        rows.append([InlineKeyboardButton(text=T(lang, "btn_bind_edit"), callback_data="wd_bind")])
+    else:
+        # 已绑定且够分: 兑换按钮 + 修改按钮
+        status = ""
+        rows.append([InlineKeyboardButton(text=T(lang, "withdraw_btn"), callback_data="confirm_withdraw")])
+        rows.append([InlineKeyboardButton(text=T(lang, "btn_bind_edit"), callback_data="wd_bind")])
+    rows.append([InlineKeyboardButton(text=T(lang, "help_back"), callback_data="h_home")])
+    txt = T(lang, "withdraw_info", pts=pts, min=WITHDRAW_MIN, acct=acct, status=status)
+    return txt, InlineKeyboardMarkup(inline_keyboard=rows)
+
+
+# 主菜单"兑换提现"按钮(文字触发)
+@dp.message(F.text.in_({TEXTS["zh"]["btn_withdraw"], TEXTS["en"]["btn_withdraw"]}))
+async def withdraw_entry(message: Message):
+    uid = message.from_user.id
+    lang = lang_of(uid)
+    user = get_user(uid)
+    if not user:
+        create_user(uid, message.from_user.username or "", message.from_user.first_name or "")
+        user = get_user(uid)
+    txt, kb = withdraw_view(user, lang)
+    await message.answer(txt, reply_markup=kb, parse_mode="HTML")
+
+
+# 兑换页里点"绑定/修改账号" → 进入绑定输入态
+@dp.callback_query(F.data == "wd_bind")
+async def wd_bind(cb: CallbackQuery):
     uid = cb.from_user.id
     lang = lang_of(uid)
     user = get_user(uid)
@@ -411,29 +448,6 @@ async def help_bind(cb: CallbackQuery):
     if user and user["account"]:
         txt += "\n\n" + T(lang, "bind_current", acct=user["account"])
     await cb.message.edit_text(txt, reply_markup=back_menu(lang), parse_mode="HTML")
-    await cb.answer()
-
-
-@dp.callback_query(F.data == "h_withdraw")
-async def help_withdraw(cb: CallbackQuery):
-    uid = cb.from_user.id
-    lang = lang_of(uid)
-    user = get_user(uid)
-    acct = user["account"] if user and user["account"] else "—"
-    pts = user["points"] if user else 0
-    if not user or not user["account"]:
-        status = T(lang, "withdraw_no_acct", min=WITHDRAW_MIN)
-        kb = back_menu(lang)
-    elif pts < WITHDRAW_MIN:
-        status = T(lang, "withdraw_not_enough", min=WITHDRAW_MIN)
-        kb = back_menu(lang)
-    else:
-        status = ""
-        kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text=T(lang, "withdraw_btn"), callback_data="confirm_withdraw")],
-            [InlineKeyboardButton(text=T(lang, "help_back"), callback_data="h_home")]])
-    await cb.message.edit_text(T(lang, "withdraw_info", pts=pts, min=WITHDRAW_MIN, acct=acct, status=status),
-                               reply_markup=kb, parse_mode="HTML")
     await cb.answer()
 
 
@@ -498,6 +512,10 @@ async def catch_text(message: Message):
         set_field(uid, "account", acct)
         awaiting_bind.discard(uid)
         await message.answer(T(lang, "bind_ok", acct=acct), reply_markup=main_menu(lang))
+        # 绑定成功后直接显示兑换页, 用户可接着兑换
+        user = get_user(uid)
+        txt, kb = withdraw_view(user, lang)
+        await message.answer(txt, reply_markup=kb, parse_mode="HTML")
         return
     # 2) 迁移口令 (不区分大小写)
     if message.text.strip().upper() == MIGRATION_CODE.upper():
