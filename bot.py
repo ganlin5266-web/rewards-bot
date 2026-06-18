@@ -102,6 +102,8 @@ TEXTS = {
         "code_used": "你已经领过启动金啦，不能重复领取～",
         "code_wrong": "口令不对哦。如果你是从 WhatsApp 过来的，请核对公告里的口令。",
         "withdraw_done_deduct": "✅ 兑换申请已提交！已扣除 {min} 积分，将按 1:1 转入你的平台账号。客服处理后请到平台查看，有问题联系 {contact}。",
+        "withdraw_confirm": "⚠️ <b>请核对你的平台账号</b>\n\n积分将转入这个平台账号：\n<b>{acct}</b>\n\n兑换积分：{min}\n\n确认无误再点下方按钮，转错账号无法找回！\n账号填错了？先去【🔗 绑定平台账号】改正。",
+        "withdraw_confirm_btn": "✅ 确认账号无误，兑换",
     },
     "en": {
         "choose_lang": "请选择语言 / Please choose your language：",
@@ -152,6 +154,8 @@ TEXTS = {
         "code_used": "You've already claimed the starter bonus~",
         "code_wrong": "Wrong code. If you came from WhatsApp, please check the code in the announcement.",
         "withdraw_done_deduct": "✅ Exchange submitted! {min} points deducted, will be transferred 1:1 to your platform account. Check the platform after processing; contact {contact} if needed.",
+        "withdraw_confirm": "⚠️ <b>Please verify your platform account</b>\n\nPoints will go to:\n<b>{acct}</b>\n\nExchange: {min} points\n\nConfirm only if correct — wrong account cannot be recovered!\nWrong account? Go to [🔗 Bind Platform Account] to fix it.",
+        "withdraw_confirm_btn": "✅ Account is correct, exchange",
     },
 }
 # =====================================================================
@@ -426,10 +430,29 @@ async def help_withdraw(cb: CallbackQuery):
     else:
         status = ""
         kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text=T(lang, "withdraw_btn"), callback_data="do_withdraw")],
+            [InlineKeyboardButton(text=T(lang, "withdraw_btn"), callback_data="confirm_withdraw")],
             [InlineKeyboardButton(text=T(lang, "help_back"), callback_data="h_home")]])
     await cb.message.edit_text(T(lang, "withdraw_info", pts=pts, min=WITHDRAW_MIN, acct=acct, status=status),
                                reply_markup=kb, parse_mode="HTML")
+    await cb.answer()
+
+
+@dp.callback_query(F.data == "confirm_withdraw")
+async def confirm_withdraw(cb: CallbackQuery):
+    uid = cb.from_user.id
+    lang = lang_of(uid)
+    user = get_user(uid)
+    # 再校验一次
+    if not user or not user["account"] or user["points"] < WITHDRAW_MIN:
+        await cb.answer()
+        return
+    # 显示绑定的平台账号, 让用户核对, 核对无误才真正扣分
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=T(lang, "withdraw_confirm_btn"), callback_data="do_withdraw")],
+        [InlineKeyboardButton(text=T(lang, "help_back"), callback_data="h_home")]])
+    await cb.message.edit_text(
+        T(lang, "withdraw_confirm", acct=user["account"], min=WITHDRAW_MIN),
+        reply_markup=kb, parse_mode="HTML")
     await cb.answer()
 
 
